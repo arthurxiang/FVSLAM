@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
-project(ORB_SLAM2)
+project(FVSLAM)
 
-IF(NOT CMAKE_BUILD_TYPE)
+IF(NOT CMAKE_BUPE)
   SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
