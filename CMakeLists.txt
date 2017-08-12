@@ -115,6 +115,8 @@ add_executable(mono_bit_sim
 Examples/Monocular/mono_bit_sim.cc)
 target_link_libraries(mono_bit_sim ${PROJECT_NAME})
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/HIL_SIM)
+
 add_executable(mono_bit_HIL
-        Examples/Monocular/mono_bit_HIL.cc)
+        Examples/HIL_SIM/mono_bit_HIL.cc)
 target_link_libraries(mono_bit_HIL ${PROJECT_NAME})
