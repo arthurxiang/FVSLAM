@@ -27,6 +27,7 @@
 
 #include<opencv2/opencv.hpp>
 
+#include "XlibShoter.h"
 #include"System.h"
 #include "SLAM_BIT.h"
 using namespace std;
@@ -34,41 +35,41 @@ using namespace cv;
 void LoadImages(const string &strPathToSequence, vector<imgdata> & imglist);
 
 int main(int argc, char **argv) {
-    if (argc != 4) {
-        cerr << endl << "Usage: ./mono_bit path_to_vocabulary path_to_settings path_to_sequence" << endl;
+    if (argc != 3) {
+        cerr << endl << "Usage: ./mono_bit path_to_vocabulary path_to_settings" << endl;
         return 1;
     }
+    ScreenShot screen(1920, 0, 1440, 2560);
     // Retrieve paths to images
-    vector<imgdata> vImgList;
     Mat K;
-    LoadImages(string(argv[3]), vImgList);
-
-    int nImages = vImgList.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true);
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
-    vTimesTrack.resize(nImages);
+    vTimesTrack.resize(3000);
 
     cout << endl << "-------" << endl;
-    cout << "Start processing sequence ..." << endl;
-    cout << "Images in the sequence: " << nImages << endl << endl;
+    cout << "Start processing HIL ..." << endl;
+
+    flightdata Data;
 
     // Main loop
     cv::Mat im;
     double tframe = 0;
-    for (int ni = 0; ni < nImages; ni++) {
-        // Read image from file
-        im = cv::imread(vImgList[ni].file, CV_LOAD_IMAGE_UNCHANGED);
-        tframe += vImgList[ni].tspan;
+    double tstart = clock();
+    uint nImages=0;
+    for (uint ni=0;;ni++) {
+        screen(im);
+
+        tframe = clock()-tstart;
 
         if (im.empty()) {
-            cerr << endl << "Failed to load image at: " << vImgList[ni].file << endl;
-            return 1;
+            cerr << endl << "Failed to load image at: " << ni << endl;
+            break;
         }
-
+        nImages++;
 #ifdef COMPILEDWITHC11
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 #else
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
 #endif
 
         // Pass the image to the SLAM system
-        SLAM.TrackMonocularWithFD(im, tframe, vImgList[ni].Data);
+        SLAM.TrackMonocularWithFD(im, tframe, Data);
 
 #ifdef COMPILEDWITHC11
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
@@ -88,11 +89,6 @@ int main(int argc, char **argv) {
 
         vTimesTrack[ni] = ttrack;
 
-        // Wait to load the next frame
-        double T = vImgList[ni].tspan;
-
-        if (ttrack < T)
-            usleep((T - ttrack) * 1e3);
     }
 
     // Stop all threads
