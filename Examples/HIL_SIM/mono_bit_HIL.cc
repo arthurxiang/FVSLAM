@@ -26,9 +26,8 @@
 #include<iomanip>
 
 #include<opencv2/opencv.hpp>
-
-#include "XlibShoter.h"
 #include"System.h"
+#include "XlibShoter.h"
 #include "SLAM_BIT.h"
 using namespace std;
 using namespace cv;
