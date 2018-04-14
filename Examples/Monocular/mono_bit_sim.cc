@@ -32,7 +32,7 @@
 using namespace std;
 using namespace cv;
 void LoadImages(const string &strPathToSequence, vector<imgdata> & imglist);
-
+#define __DRAWSKYLINE__
 int main(int argc, char **argv) {
     if (argc != 4) {
         cerr << endl << "Usage: ./mono_bit path_to_vocabulary path_to_settings path_to_sequence" << endl;

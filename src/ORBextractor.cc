@@ -976,7 +976,7 @@ namespace ORB_SLAM2 {
             computeOrbDescriptor(keypoints[i], image, &pattern[0], descriptors.ptr((int) i));
     }
 
-    void ORBextractor::operator()(cv::InputArray _image, flightdata fd,
+    void ORBextractor::operator()(cv::InputOutputArray _image, flightdata fd,
                                   std::vector<cv::KeyPoint> &_keypoints,
                                   cv::OutputArray _descriptors) {
         if (_image.empty())
@@ -988,6 +988,20 @@ namespace ORB_SLAM2 {
         // Pre-compute the scale pyramid
         ComputePyramid(image);
         ComputeSkylinePyramid(image,fd);
+        //cv::line(_image,)
+        const Scalar Skyline=mvLinesPyr[0];
+        printf("%f,%f\n",fd.pitch,fd.roll);
+        //printf("%f,%f\n",Skyline.val[0],Skyline.val[1]);
+        Point pt1,pt2;
+        pt1.x=0;
+        pt1.y=calcSkyliney(pt1.x,Skyline.val[0],Skyline.val[1]);
+        pt2.x=_image.cols();
+        pt2.y=calcSkyliney(pt2.x,Skyline.val[0],Skyline.val[1]);
+        line(_image,pt1,pt2,Scalar(0,0,255));
+        #ifdef __DRAWSKYLINE__
+
+
+#endif
         vector<vector<KeyPoint> > allKeypoints;
         ComputeKeyPointsOctTree(allKeypoints);
         //ComputeKeyPointsOld(allKeypoints);
@@ -1126,7 +1140,8 @@ namespace ORB_SLAM2 {
         const float cx = mK.at<float>(0, 2);
         const float cy = mK.at<float>(1, 2);
         const float factor_D2R = CV_PI / 180;
-        float pitch = fd.pitch+ignoreAngle;
+        setAngle=35;
+        float pitch = fd.pitch+ignoreAngle-setAngle;
         float roll = fd.roll;
         double k = tan(-roll * factor_D2R) * fy / fx;
         for (int level = 0; level < nlevels; ++level) {

@@ -29,9 +29,11 @@
 
 #include"System.h"
 #include "SLAM_BIT.h"
+
 using namespace std;
 using namespace cv;
-void LoadImages(const string &strPathToSequence, vector<imgdata> & imglist);
+
+void LoadImages(const string &strPathToSequence, vector<imgdata> &imglist);
 
 int main(int argc, char **argv) {
     if (argc != 4) {
@@ -114,7 +116,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void LoadImages(const string &strPathToSequence, vector<imgdata> & imglist) {
+void LoadImages(const string &strPathToSequence, vector<imgdata> &imglist) {
 
     FileStorage fs;
     string strPathTimeFile = strPathToSequence + "/data.xml";

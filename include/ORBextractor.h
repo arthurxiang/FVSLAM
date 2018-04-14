@@ -59,7 +59,7 @@ namespace ORB_SLAM2 {
                         std::vector<cv::KeyPoint> &keypoints,
                         cv::OutputArray descriptors);
 
-        void operator()(cv::InputArray image, flightdata fd,
+        void operator()(cv::InputOutputArray image, flightdata fd,
                         std::vector<cv::KeyPoint> &keypoints,
                         cv::OutputArray descriptors);
 
@@ -112,6 +112,7 @@ namespace ORB_SLAM2 {
         int iniThFAST;
         int minThFAST;
         double ignoreAngle;
+        double setAngle;
         std::vector<int> mnFeaturesPerLevel;
 
         std::vector<int> umax;

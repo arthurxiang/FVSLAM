@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(FVSLAM)
 
-IF(NOT CMAKE_BUPE)
+IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
