@@ -120,3 +120,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/HIL_SIM)
 add_executable(mono_bit_HIL
         Examples/HIL_SIM/mono_bit_HIL.cc)
 target_link_libraries(mono_bit_HIL ${PROJECT_NAME})
+
+# Build tools
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
+
+add_executable(SaveVocabulary
+        Vocabulary/bin_vocabulary.cpp)
+target_link_libraries(SaveVocabulary ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so ${OpenCV_LIBS})

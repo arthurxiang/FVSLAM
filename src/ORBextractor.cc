@@ -73,7 +73,7 @@ namespace ORB_SLAM2 {
     const int EDGE_THRESHOLD = 19;
     const float factor_D2R = CV_PI / 180;
 
-    static float calcSkyliney(uint x, float k,float b) {
+    static float calcSkyliney(uint x, float k, float b) {
         float y = x * k + b;
         return y;
     }
@@ -416,9 +416,9 @@ namespace ORB_SLAM2 {
             };
 
     ORBextractor::ORBextractor(int _nfeatures, float _scaleFactor, int _nlevels,
-                               int _iniThFAST, int _minThFAST,cv::Mat K,double ignoreAngle) :
+                               int _iniThFAST, int _minThFAST, cv::Mat K, double ignoreAngle) :
             nfeatures(_nfeatures), scaleFactor(_scaleFactor), nlevels(_nlevels),
-            iniThFAST(_iniThFAST), minThFAST(_minThFAST),mK(K),ignoreAngle(ignoreAngle) {
+            iniThFAST(_iniThFAST), minThFAST(_minThFAST), mK(K), ignoreAngle(ignoreAngle) {
         mvScaleFactor.resize(nlevels);
         mvLevelSigma2.resize(nlevels);
         mvScaleFactor[0] = 1.0f;
@@ -542,7 +542,7 @@ namespace ORB_SLAM2 {
 
         const float hX = static_cast<float>(maxX - minX) / nIni;
 
-        list <ExtractorNode> lNodes;
+        list<ExtractorNode> lNodes;
 
         vector<ExtractorNode *> vpIniNodes;
         vpIniNodes.resize(nIni);
@@ -736,7 +736,7 @@ namespace ORB_SLAM2 {
             const int minBorderY = minBorderX;
             const int maxBorderX = mvImagePyramid[level].cols - EDGE_THRESHOLD + 3;
             const int maxBorderY = mvImagePyramid[level].rows - EDGE_THRESHOLD + 3;
-            const Scalar Skyline=mvLinesPyr[level];
+            const Scalar Skyline = mvLinesPyr[level];
             vector<cv::KeyPoint> vToDistributeKeys;
             vToDistributeKeys.reserve(nfeatures * 10);
 
@@ -764,10 +764,10 @@ namespace ORB_SLAM2 {
                         continue;
                     if (maxX > maxBorderX)
                         maxX = maxBorderX;
-                    uint midX=(iniX+maxX)*0.5;
-                    uint midY=(iniY+maxY)*0.5;
-                    uint SkylineY=calcSkyliney(midX,Skyline.val[0],Skyline.val[1]);
-                    if(midY<SkylineY) {
+                    uint midX = (iniX + maxX) * 0.5;
+                    uint midY = (iniY + maxY) * 0.5;
+                    uint SkylineY = calcSkyliney(midX, Skyline.val[0], Skyline.val[1]);
+                    if (midY < SkylineY) {
                         continue;
                     }
                     vector<cv::KeyPoint> vKeysCell;
@@ -987,18 +987,17 @@ namespace ORB_SLAM2 {
 
         // Pre-compute the scale pyramid
         ComputePyramid(image);
-        ComputeSkylinePyramid(image,fd);
-        //cv::line(_image,)
+        ComputeSkylinePyramid(image, fd);
+
+#ifdef __DRAWSKYLINE__
+
         const Scalar Skyline=mvLinesPyr[0];
-        printf("%f,%f\n",fd.pitch,fd.roll);
-        //printf("%f,%f\n",Skyline.val[0],Skyline.val[1]);
         Point pt1,pt2;
         pt1.x=0;
         pt1.y=calcSkyliney(pt1.x,Skyline.val[0],Skyline.val[1]);
         pt2.x=_image.cols();
         pt2.y=calcSkyliney(pt2.x,Skyline.val[0],Skyline.val[1]);
         line(_image,pt1,pt2,Scalar(0,0,255));
-        #ifdef __DRAWSKYLINE__
 
 
 #endif
@@ -1134,14 +1133,14 @@ namespace ORB_SLAM2 {
 
     }
 
-    void ORBextractor::ComputeSkylinePyramid(cv::Mat image,flightdata fd) {
+    void ORBextractor::ComputeSkylinePyramid(cv::Mat image, flightdata fd) {
         const float fx = mK.at<float>(0, 0);
         const float fy = mK.at<float>(1, 1);
         const float cx = mK.at<float>(0, 2);
         const float cy = mK.at<float>(1, 2);
         const float factor_D2R = CV_PI / 180;
-        setAngle=35;
-        float pitch = fd.pitch+ignoreAngle-setAngle;
+        setAngle = 35;
+        float pitch = fd.pitch + ignoreAngle - setAngle;
         float roll = fd.roll;
         double k = tan(-roll * factor_D2R) * fy / fx;
         for (int level = 0; level < nlevels; ++level) {
